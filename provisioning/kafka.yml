@@ -1,7 +1,8 @@
 ---
 - hosts: all
   vars:
-    kafka: kafka_2.11-0.11.0.2
+    kafka_version: 2.0.1
+    kafka: kafka_2.11-{{ kafka_version }}
   become: true
   gather_facts: False
   pre_tasks:
@@ -29,9 +30,9 @@
 
     - name: download kafka
       get_url:
-        url: http://www-us.apache.org/dist/kafka/0.11.0.2/{{kafka}}.tgz
+        url: http://www-us.apache.org/dist/kafka/{{kafka_version}}/{{kafka}}.tgz
         dest: /tmp/{{kafka}}.tgz
-        checksum: sha256:e90bbf722719d1537167d390ce846282b9dead53f78922cc81594abd62787134
+        checksum: sha512:0F47A45034F3F5FE25AF30F8C2B5746CEB1AB2A40DF6D1E5CB238B677B9C6A9B5FD11478099158AB0FB85F3C035FEB03BEAAA9EC7A7CAB88FD26F74CE55AE6BA
 
     - name: create kafka directory
       file:

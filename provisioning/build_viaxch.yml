@@ -1,18 +1,21 @@
 ---
 
-- name: install libev, libmpdec, libjansson, libmysqlclient, libssl
+- name: install libev, libmpdec, libjansson, libssl
   apt: pkg={{item}} state=present
   with_items:
     - build-essential
     - libev-dev
     - libmpdec-dev
     - libjansson-dev 
-    - libmysqlclient-dev 
     - libssl-dev
+
+# install specific version of libmysqlclient-dev so we dont clash with libssl-dev
+- name: install specific version of libmysqlclient-dev
+  shell: apt install libmysqlclient20=5.7.11-0ubuntu6 libmysqlclient-dev=5.7.11-0ubuntu6
 
 # ubuntu does not have a recent enough version of librdkafka
 - name: download librdkafka
-  get_url: url=https://github.com/edenhill/librdkafka/archive/v0.11.0.tar.gz dest=/tmp/v0.11.0.tar.gz checksum=sha256:d4baf9a0d08767128913bb4e39d68995a95d7efa834fcf3e4f60c3156003b887
+  get_url: url=https://github.com/edenhill/librdkafka/archive/v0.11.6.tar.gz dest=/tmp/v0.11.6.tar.gz checksum=sha256:9c0afb8b53779d968225edf1e79da48a162895ad557900f75e7978f65e642032
 
 - name: create librdkafka directory
   file:
@@ -22,11 +25,11 @@
 - name: extract librdkafka .tar.gz into /opt/librdkafka
   unarchive:
     copy: no
-    src: /tmp/v0.11.0.tar.gz
+    src: /tmp/v0.11.6.tar.gz
     dest: /opt/librdkafka
 
 - name: make & install librdkafka
-  shell: cd /opt/librdkafka/librdkafka-0.11.0 && ./configure && make && make install
+  shell: cd /opt/librdkafka/librdkafka-0.11.6 && ./configure && make && make install
   args:
     creates: /usr/local/lib/librdkafka.so
 
