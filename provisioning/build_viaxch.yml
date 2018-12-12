@@ -12,7 +12,7 @@
 
 # install specific version of libmysqlclient-dev so we dont clash with libssl-dev
 - name: install specific version of libmysqlclient-dev
-  shell: apt install libmysqlclient20=5.7.11-0ubuntu6 libmysqlclient-dev=5.7.11-0ubuntu6
+  shell: apt install -y --allow-downgrades libmysqlclient20=5.7.11-0ubuntu6 libmysqlclient-dev=5.7.11-0ubuntu6
 
 # ubuntu does not have a recent enough version of librdkafka
 - name: download librdkafka
