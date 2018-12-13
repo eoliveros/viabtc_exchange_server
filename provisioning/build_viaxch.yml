@@ -9,6 +9,7 @@
     - libjansson-dev 
     - libssl-dev
     - liblz4-dev
+    - libcurl4-openssl-dev
 
 # install specific version of libmysqlclient-dev so we dont clash with libssl-dev
 - name: install specific version of libmysqlclient-dev
