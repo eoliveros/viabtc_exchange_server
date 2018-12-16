@@ -14,9 +14,12 @@
     - name: create log directory
       file: path=/var/log/trade/ state=directory
 
+    - name: copy conf file
+      shell: mkdir -p {{conf_dir}}/alertcenter; cp {{root_dir}}/alertcenter/config.json {{conf_dir}}/alertcenter/config.json
+
     # using named groups due to ansible munging backrefs next to numbers (http://www.handverdrahtet.org/2016/01/ansible-using-numbered-backreference.html)
     - name:
-      shell: perl -i -p0e 's/{{ item.regexp }}/{{ item.replace }}/s' {{root_dir}}/alertcenter/config.json
+      shell: perl -i -p0e 's/{{ item.regexp }}/{{ item.replace }}/s' {{conf_dir}}/alertcenter/config.json
       with_items:
           - { regexp: '(?<one>"redis": \{[^\{]*"addr": \[[^\{]*")(127.0.0.1)(?<three>:26381",)',
               replace: '$+{one}{{redis_host}}$+{three}' }
@@ -31,9 +34,12 @@
         - python-boto3
         - python-redis
 
+    - name: copy send alert file
+      shell: cp {{root_dir}}/alertcenter/send_alert.py {{conf_dir}}/alertcenter/send_alert.py
+
     # using named groups due to ansible munging backrefs next to numbers (http://www.handverdrahtet.org/2016/01/ansible-using-numbered-backreference.html)
     - name:
-      shell: perl -i -p0e 's/{{ item.regexp }}/{{ item.replace }}/s' {{root_dir}}/alertcenter/send_alert.py
+      shell: perl -i -p0e 's/{{ item.regexp }}/{{ item.replace }}/s' {{conf_dir}}/alertcenter/send_alert.py
       with_items:
           - { regexp: '(?<one>\[.)(yang\@haipo.me)(?<three>.\])',
               replace: '$+{one}{{alert_email | regex_replace("\@", "\\@")}}$+{three}' }

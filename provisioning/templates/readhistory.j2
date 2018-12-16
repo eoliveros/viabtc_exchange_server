@@ -5,7 +5,7 @@ After=network.target alertcenter.service mysql.service
 [Service]
 Type=forking
 SyslogIdentifier=readhistory
-ExecStart={{root_dir}}/readhistory/readhistory.exe {{root_dir}}/readhistory/config.json
+ExecStart={{root_dir}}/readhistory/readhistory.exe {{conf_dir}}/readhistory/config.json
 
 Restart=always
 PrivateTmp=true

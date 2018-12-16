@@ -5,7 +5,7 @@ After=network.target alertcenter.service kafka.service
 [Service]
 Type=forking
 SyslogIdentifier=accessws
-ExecStart={{root_dir}}/accessws/accessws.exe {{root_dir}}/accessws/config.json
+ExecStart={{root_dir}}/accessws/accessws.exe {{conf_dir}}/accessws/config.json
 
 Restart=always
 PrivateTmp=true

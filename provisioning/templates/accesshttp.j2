@@ -5,7 +5,7 @@ After=network.target alertcenter.service matchengine.service marketprice.service
 [Service]
 Type=forking
 SyslogIdentifier=accesshttp
-ExecStart={{root_dir}}/accesshttp/accesshttp.exe {{root_dir}}/accesshttp/config.json
+ExecStart={{root_dir}}/accesshttp/accesshttp.exe {{conf_dir}}/accesshttp/config.json
 
 Restart=always
 PrivateTmp=true

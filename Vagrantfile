@@ -30,6 +30,7 @@ Vagrant.configure(2) do |config|
       ALERT_HOST = "10.50.1.10"
   end
 
+  CONF_DIR = "/opt/viabtc"
   MYSQL_USER = "viaxch"
   MYSQL_PASS = "not_production"
   REDIS_PASS = nil
@@ -41,49 +42,49 @@ Vagrant.configure(2) do |config|
   mysql_vars = { root_dir: "/vagrant", mysql_user: MYSQL_USER, mysql_pass: MYSQL_PASS, mysql_user_match_host: MATCH_HOST, mysql_user_data_host: DATA_HOST, admin_host: VM_HOST }
   redis_vars = { root_dir: "/vagrant", redis_pass: REDIS_PASS, redis_host: REDIS_HOST}
   kafka_vars = { root_dir: "/vagrant" }
-  match_vars = { root_dir: "/vagrant", mysql_user: MYSQL_USER, mysql_pass: MYSQL_PASS, mysql_host: MYSQL_HOST, kafka_host: KAFKA_HOST, alert_host: ALERT_HOST }
-  price_vars = { root_dir: "/vagrant", redis_host: REDIS_HOST, kafka_host: KAFKA_HOST, alert_host: ALERT_HOST }
-  data_vars =  { root_dir: "/vagrant", mysql_user: MYSQL_USER, mysql_pass: MYSQL_PASS, mysql_host: MYSQL_HOST, alert_host: ALERT_HOST }
-  http_vars =  { root_dir: "/vagrant", match_host: MATCH_HOST, price_host: PRICE_HOST, data_host: DATA_HOST, alert_host: ALERT_HOST }
-  ws_vars =    { root_dir: "/vagrant", match_host: MATCH_HOST, price_host: PRICE_HOST, data_host: DATA_HOST, kafka_host: KAFKA_HOST, auth_url: AUTH_URL, alert_host: ALERT_HOST }
-  alert_vars =    { root_dir: "/vagrant", redis_host: REDIS_HOST, alert_email: ALERT_EMAIL }
+  match_vars = { root_dir: "/vagrant", conf_dir: CONF_DIR, mysql_user: MYSQL_USER, mysql_pass: MYSQL_PASS, mysql_host: MYSQL_HOST, kafka_host: KAFKA_HOST, alert_host: ALERT_HOST }
+  price_vars = { root_dir: "/vagrant", conf_dir: CONF_DIR, redis_host: REDIS_HOST, kafka_host: KAFKA_HOST, alert_host: ALERT_HOST }
+  data_vars =  { root_dir: "/vagrant", conf_dir: CONF_DIR, mysql_user: MYSQL_USER, mysql_pass: MYSQL_PASS, mysql_host: MYSQL_HOST, alert_host: ALERT_HOST }
+  http_vars =  { root_dir: "/vagrant", conf_dir: CONF_DIR, match_host: MATCH_HOST, price_host: PRICE_HOST, data_host: DATA_HOST, alert_host: ALERT_HOST }
+  ws_vars =    { root_dir: "/vagrant", conf_dir: CONF_DIR, match_host: MATCH_HOST, price_host: PRICE_HOST, data_host: DATA_HOST, kafka_host: KAFKA_HOST, auth_url: AUTH_URL, alert_host: ALERT_HOST }
+  alert_vars = { root_dir: "/vagrant", conf_dir: CONF_DIR, redis_host: REDIS_HOST, alert_email: ALERT_EMAIL }
 
   if combine_servers
       config.vm.define "main_svr" do |main_svr|
           main_svr.vm.network "private_network", ip: COMBINE_HOST
-          main_svr.vm.provision "mysql", type: "ansible" do |ansible|
+          main_svr.vm.provision "mysql", type: "ansible_local" do |ansible|
             ansible.playbook = "provisioning/mysql.yml"
             ansible.extra_vars = mysql_vars
           end
-          main_svr.vm.provision "redis", type: "ansible" do |ansible|
+          main_svr.vm.provision "redis", type: "ansible_local" do |ansible|
             ansible.playbook = "provisioning/redis.yml"
             ansible.extra_vars = redis_vars
           end
-          main_svr.vm.provision "kafka", type: "ansible" do |ansible|
+          main_svr.vm.provision "kafka", type: "ansible_local" do |ansible|
             ansible.playbook = "provisioning/kafka.yml"
             ansible.extra_vars = kafka_vars
           end
-          main_svr.vm.provision "match_svr", type: "ansible" do |ansible|
+          main_svr.vm.provision "match_svr", type: "ansible_local" do |ansible|
             ansible.playbook = "provisioning/match_svr.yml"
             ansible.extra_vars = match_vars
           end
-          main_svr.vm.provision "price_svr", type: "ansible" do |ansible|
+          main_svr.vm.provision "price_svr", type: "ansible_local" do |ansible|
             ansible.playbook = "provisioning/price_svr.yml"
             ansible.extra_vars = price_vars
           end
-          main_svr.vm.provision "data_svr", type: "ansible" do |ansible|
+          main_svr.vm.provision "data_svr", type: "ansible_local" do |ansible|
             ansible.playbook = "provisioning/data_svr.yml"
             ansible.extra_vars = data_vars
           end
-          main_svr.vm.provision "http_svr", type: "ansible" do |ansible|
+          main_svr.vm.provision "http_svr", type: "ansible_local" do |ansible|
             ansible.playbook = "provisioning/http_svr.yml"
             ansible.extra_vars = http_vars
           end
-          main_svr.vm.provision "ws_svr", type: "ansible" do |ansible|
+          main_svr.vm.provision "ws_svr", type: "ansible_local" do |ansible|
             ansible.playbook = "provisioning/ws_svr.yml"
             ansible.extra_vars = ws_vars
           end
-          main_svr.vm.provision "alert_svr", type: "ansible" do |ansible|
+          main_svr.vm.provision "alert_svr", type: "ansible_local" do |ansible|
             ansible.playbook = "provisioning/alert_svr.yml"
             ansible.extra_vars = alert_vars
           end

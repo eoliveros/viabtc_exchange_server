@@ -5,7 +5,7 @@ After=network.target redis.service
 [Service]
 Type=forking
 SyslogIdentifier=alertcenter
-ExecStart={{root_dir}}/alertcenter/alertcenter.exe {{root_dir}}/alertcenter/config.json
+ExecStart={{root_dir}}/alertcenter/alertcenter.exe {{conf_dir}}/alertcenter/config.json
 
 Restart=always
 PrivateTmp=true

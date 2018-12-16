@@ -5,7 +5,7 @@ After=network.target redis.service
 [Service]
 Type=simple
 SyslogIdentifier=alertcenter_mailer
-ExecStart=/usr/bin/python {{root_dir}}/alertcenter/send_alert.py
+ExecStart=/usr/bin/python {{conf_dir}}/alertcenter/send_alert.py
 
 Restart=always
 PrivateTmp=true

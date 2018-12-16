@@ -5,7 +5,7 @@ After=network.target alertcenter.service redis.service
 [Service]
 Type=forking
 SyslogIdentifier=marketprice
-ExecStart={{root_dir}}/marketprice/marketprice.exe {{root_dir}}/marketprice/config.json
+ExecStart={{root_dir}}/marketprice/marketprice.exe {{conf_dir}}/marketprice/config.json
 
 Restart=always
 PrivateTmp=true

@@ -14,9 +14,12 @@
     - name: create log directory
       file: path=/var/log/trade/ state=directory
 
+    - name: copy conf file
+      shell: mkdir -p {{conf_dir}}/accesshttp; cp {{root_dir}}/accesshttp/config.json {{conf_dir}}/accesshttp/config.json
+
     # using named groups due to ansible munging backrefs next to numbers (http://www.handverdrahtet.org/2016/01/ansible-using-numbered-backreference.html)
     - name:
-      shell: perl -i -p0e 's/{{ item.regexp }}/{{ item.replace }}/s' {{root_dir}}/accesshttp/config.json
+      shell: perl -i -p0e 's/{{ item.regexp }}/{{ item.replace }}/s' {{conf_dir}}/accesshttp/config.json
       with_items:
           - { regexp: '(?<one>"matchengine": \{[^\{]*"addr": \[[^\{]*"tcp@)(127.0.0.1)(?<three>:7316")',
               replace: '$+{one}{{match_host}}$+{three}' }
