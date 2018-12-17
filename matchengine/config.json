@@ -42,31 +42,19 @@
             "prec_show": 8
         }, {
             "name": "BTC",
-            "prec_save": 12,
+            "prec_save": 20,
             "prec_show": 8
         }, {
             "name": "LTC",
             "prec_save": 12,
             "prec_show": 8
         }, {
-            "name": "ETH",
+            "name": "WAVES",
             "prec_save": 12,
             "prec_show": 8
         }, {
-            "name": "ETC",
-            "prec_save": 12,
-            "prec_show": 8
-        }, {
-            "name": "ZEC",
-            "prec_save": 12,
-            "prec_show": 8
-        }, {
-            "name": "XMR",
-            "prec_save": 12,
-            "prec_show": 8
-        }, {
-            "name": "DSH",
-            "prec_save": 12,
+            "name": "NZD",
+            "prec_save": 20,
             "prec_show": 8
         }
     ],
@@ -94,57 +82,24 @@
             },
             "min_amount": "0.001"
         }, {
-            "name": "ETHBCH",
+            "name": "WAVESBTC",
             "stock": {
-                "name": "ETH",
+                "name": "WAVES",
                 "prec": 8
             },
             "money": {
-                "name": "BCH",
+                "name": "BTC",
                 "prec": 8
             },
             "min_amount": "0.001"
         }, {
-            "name": "ETCBCH",
+            "name": "WAVESNZD",
             "stock": {
-                "name": "ETC",
+                "name": "WAVES",
                 "prec": 8
             },
             "money": {
-                "name": "BCH",
-                "prec": 8
-            },
-            "min_amount": "0.001"
-        }, {
-            "name": "ZECBCH",
-            "stock": {
-                "name": "ZEC",
-                "prec": 8
-            },
-            "money": {
-                "name": "BCH",
-                "prec": 8
-            },
-            "min_amount": "0.001"
-        }, {
-            "name": "XMRBCH",
-            "stock": {
-                "name": "XMR",
-                "prec": 8
-            },
-            "money": {
-                "name": "BCH",
-                "prec": 8
-            },
-            "min_amount": "0.001"
-        }, {
-            "name": "DSHBCH",
-            "stock": {
-                "name": "DSH",
-                "prec": 8
-            },
-            "money": {
-                "name": "BCH",
+                "name": "NZD",
                 "prec": 8
             },
             "min_amount": "0.001"
