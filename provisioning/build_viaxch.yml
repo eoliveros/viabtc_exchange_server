@@ -50,7 +50,7 @@
     dest: /opt/curl
 
 - name: make & install libcurl
-  shell: cd /opt/curl/curl-7.55.1 && ./configure --without-ssl && make && make install
+  shell: cd /opt/curl/curl-7.55.1 && ./configure && make && make install
   args:
     creates: /usr/local/lib/libcurl.so
     
