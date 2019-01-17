@@ -1,0 +1,57 @@
+---
+- name: dependency provisioning
+  hosts: all
+  become: yes
+  become_method: sudo
+  gather_facts: false
+  tasks:
+    - raw: sudo apt-get update
+    - name: install python2
+      raw: sudo apt-get -y install python-minimal
+
+- hosts: all
+  become: yes
+  become_user: root
+  tasks:
+    - name: install aptitude
+      apt: 
+        name: aptitude
+        state: present
+
+    - name: Upgrade to latest debian packages
+      apt:
+        upgrade: yes
+        update_cache: yes   
+
+    - name: Install Required Packages
+      action: apt pkg={{item}} state=present
+      with_items:
+        - git
+        - vim
+        - jq
+        - parted
+        - e2fsprogs
+        - python3
+        - python3-pip
+        - dos2unix
+        - nginx
+        - unzip
+
+    - name: copy viabtc_xch.zip
+      copy:
+        src: ../viabtc_xch.zip
+        dest: /opt/viabtc_xch.zip
+
+    - name: extract viabtc_xch.zip
+      shell: unzip -o /opt/viabtc_xch.zip -d {{root_dir}}
+
+- include: firewall.yml
+- include: mysql.yml
+- include: redis.yml
+- include: kafka.yml
+- include: match_svr.yml
+- include: price_svr.yml
+- include: data_svr.yml
+- include: http_svr.yml
+- include: ws_svr.yml
+- include: alert_svr.yml
