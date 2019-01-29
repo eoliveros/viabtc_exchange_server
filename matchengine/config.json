@@ -53,6 +53,10 @@
             "prec_save": 12,
             "prec_show": 8
         }, {
+            "name": "ZAP",
+            "prec_save": 6,
+            "prec_show": 2
+        }, {
             "name": "NZD",
             "prec_save": 20,
             "prec_show": 8
@@ -86,6 +90,17 @@
             "stock": {
                 "name": "WAVES",
                 "prec": 8
+            },
+            "money": {
+                "name": "BTC",
+                "prec": 8
+            },
+            "min_amount": "0.001"
+        }, {
+            "name": "ZAPBTC",
+            "stock": {
+                "name": "ZAP",
+                "prec": 2
             },
             "money": {
                 "name": "BTC",
