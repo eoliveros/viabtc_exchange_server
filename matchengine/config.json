@@ -37,16 +37,8 @@
     },
     "assets": [
         {
-            "name": "BCH",
-            "prec_save": 20,
-            "prec_show": 8
-        }, {
             "name": "BTC",
             "prec_save": 20,
-            "prec_show": 8
-        }, {
-            "name": "LTC",
-            "prec_save": 12,
             "prec_show": 8
         }, {
             "name": "WAVES",
@@ -64,28 +56,6 @@
     ],
     "markets": [
         {
-            "name": "BTCBCH",
-            "stock": {
-                "name": "BTC",
-                "prec": 8
-            },
-            "money": {
-                "name": "BCH",
-                "prec": 8
-            },
-            "min_amount": "0.001"
-        }, {
-            "name": "LTCBCH",
-            "stock": {
-                "name": "LTC",
-                "prec": 8
-            },
-            "money": {
-                "name": "BCH",
-                "prec": 8
-            },
-            "min_amount": "0.001"
-        }, {
             "name": "WAVESBTC",
             "stock": {
                 "name": "WAVES",
