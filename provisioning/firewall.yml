@@ -24,6 +24,7 @@
         - { if: '{{if_internal}}', rule: 'allow', direction: 'in', port: '8080', proto: 'tcp' }
         - { if: '{{if_internal}}', rule: 'allow', direction: 'in', port: '8090', proto: 'tcp' }
         - { if: '{{if_internal}}', rule: 'allow', direction: 'in', port: '3306', proto: 'tcp' }
+        - { if: '{{if_internal}}', rule: 'allow', direction: 'in', port: '9092', proto: 'tcp' }
       notify:
         - restart ufw
 

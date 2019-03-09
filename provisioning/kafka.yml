@@ -45,6 +45,12 @@
         src: /tmp/{{kafka}}.tgz
         dest: /opt/kafka
 
+    - name: set kafka advertized listener
+      replace:
+        path: /opt/kafka/{{kafka}}/config/server.properties
+        regexp: '#(advertised.listeners=).*(:9092)'
+        replace: '\1PLAINTEXT://{{kafka_advertised_listener}}\2'
+
     - name: install kafka systemd service
       template: src=templates/kafka.j2 dest=/etc/systemd/system/kafka.service
 
