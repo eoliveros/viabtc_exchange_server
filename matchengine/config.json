@@ -76,7 +76,29 @@
                 "name": "BTC",
                 "prec": 8
             },
+            "min_amount": "0.01"
+        }, {
+            "name": "BTCNZD",
+            "stock": {
+                "name": "BTC",
+                "prec": 8
+            },
+            "money": {
+                "name": "NZD",
+                "prec": 2
+            },
             "min_amount": "0.001"
+        }, {
+            "name": "ZAPNZD",
+            "stock": {
+                "name": "ZAP",
+                "prec": 2
+            },
+            "money": {
+                "name": "NZD",
+                "prec": 2
+            },
+            "min_amount": "0.01"
         }, {
             "name": "WAVESNZD",
             "stock": {
