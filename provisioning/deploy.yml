@@ -46,6 +46,7 @@
       shell: unzip -o /opt/viabtc_xch.zip -d {{root_dir}}
 
 - include: firewall.yml
+  when: deploy_type != "local"
 - include: mysql.yml
 - include: redis.yml
 - include: kafka.yml
