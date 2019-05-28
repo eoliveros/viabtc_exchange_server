@@ -9,7 +9,7 @@
     - action: setup
   tasks:
 
-    - include: build_viaxch.yml
+    - import_tasks: build_viaxch.yml
 
     - name: create log directory
       file: path=/var/log/trade/ state=directory
@@ -29,10 +29,8 @@
               replace: '$+{one}{{redis_host}}$+{three}' }
 
     - name: install python modules for send_alert.py
-      apt: pkg={{item}} state=present
-      with_items:
-        - python-boto3
-        - python-redis
+      apt:
+        name: ['python-boto3', 'python-redis']
 
     - name: copy send alert file
       shell: cp {{root_dir}}/alertcenter/send_alert.py {{conf_dir}}/alertcenter/send_alert.py

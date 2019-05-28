@@ -9,7 +9,7 @@
     - action: setup
   tasks:
 
-    - include: build_viaxch.yml
+    - import_tasks: build_viaxch.yml
 
     - name: create log directory
       file: path=/var/log/trade/ state=directory

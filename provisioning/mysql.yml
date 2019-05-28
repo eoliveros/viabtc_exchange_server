@@ -10,11 +10,8 @@
   tasks:
 
    - name: install the mysql packages
-     apt: name={{ item }} state=installed update_cache=yes
-     with_items:
-       - mysql-server
-       - mysql-client
-       - python-mysqldb
+     apt: 
+       name: ['mysql-server', 'mysql-client', 'python-mysqldb']
 
    - name: create database user (match)
      mysql_user: user={{mysql_user}} password={{mysql_pass}} host={{mysql_user_match_host}} priv=*.*:ALL state=present
@@ -52,7 +49,7 @@
          - { dbname: 'trade_history', file: 'create_trade_history.sql' }
 
    # create evidence that previous step executed correctly
-   - shell: touch /etc/mysql/tables_created
+   - file: path=/etc/mysql/tables_created state=touch
 
    - name: set user/pass in init_trade_history.sh
      lineinfile:
@@ -69,4 +66,4 @@
        creates: /etc/mysql/trade_history_initialised
 
    # create evidence that previous step executed correctly
-   - shell: touch /etc/mysql/trade_history_initialised
+   - file: path=/etc/mysql/trade_history_initialised state=touch

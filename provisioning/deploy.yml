@@ -24,18 +24,8 @@
         update_cache: yes   
 
     - name: Install Required Packages
-      action: apt pkg={{item}} state=present
-      with_items:
-        - git
-        - vim
-        - jq
-        - parted
-        - e2fsprogs
-        - python3
-        - python3-pip
-        - dos2unix
-        - nginx
-        - unzip
+      apt: 
+        name: ['git', 'vim', 'jq', 'parted', 'e2fsprogs', 'python3', 'python3-pip', 'dos2unix', 'nginx', 'unzip']
 
     - name: copy viabtc_xch.zip
       copy:
@@ -45,14 +35,14 @@
     - name: extract viabtc_xch.zip
       shell: unzip -o /opt/viabtc_xch.zip -d {{root_dir}}
 
-- include: firewall.yml
+- import_playbook: firewall.yml
   when: deploy_type != "local"
-- include: mysql.yml
-- include: redis.yml
-- include: kafka.yml
-- include: match_svr.yml
-- include: price_svr.yml
-- include: data_svr.yml
-- include: http_svr.yml
-- include: ws_svr.yml
-- include: alert_svr.yml
+- import_playbook: mysql.yml
+- import_playbook: redis.yml
+- import_playbook: kafka.yml
+- import_playbook: match_svr.yml
+- import_playbook: price_svr.yml
+- import_playbook: data_svr.yml
+- import_playbook: http_svr.yml
+- import_playbook: ws_svr.yml
+- import_playbook: alert_svr.yml

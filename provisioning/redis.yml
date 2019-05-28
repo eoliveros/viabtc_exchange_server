@@ -13,11 +13,8 @@
   tasks:
 
    - name: install the redis packages
-     apt: name={{ item }} state=installed update_cache=yes
-     with_items:
-       - redis-server
-       - redis-sentinel
-       - redis-tools
+     apt:
+       name: ['redis-server', 'redis-sentinel', 'redis-tools']
 
    - name: add redis.local.conf template
      template: src=templates/redis.local.conf.j2 dest=/etc/redis/redis.local.conf group=redis owner=redis
