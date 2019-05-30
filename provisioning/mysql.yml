@@ -25,6 +25,10 @@
    - name: create database user (admin)
      mysql_user: user={{mysql_user}} password={{mysql_pass}} host={{admin_host}} priv=*.*:ALL state=present
 
+   - name: create database user (debug)
+     mysql_user: user={{mysql_user}} password={{mysql_pass}} host={{debug_host}} priv=*.*:ALL state=present
+     when: debug_host != ""
+
    - name: set bind address
      lineinfile:
          dest: /etc/mysql/mysql.conf.d/mysqld.cnf
