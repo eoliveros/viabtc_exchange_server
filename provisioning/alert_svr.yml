@@ -41,10 +41,10 @@
       with_items:
           - { regexp: '(?<one>\[.)(yang\@haipo.me)(?<three>.\])',
               replace: '$+{one}{{alert_email | regex_replace("\@", "\\@")}}$+{three}' }
-          - { regexp: '(?<one>\(")(192.168.0.62)(?<three>", )',
-              replace: '$+{one}{{redis_host}}$+{three}' }
-          - { regexp: '(?<one>", )(26379)(?<three>\),)',
-              replace: '$+{one}{{26381}}$+{three}' }
+          - { regexp: '(?<one>\(")(192.168.0.62)(?<three>.*?\)\])',
+              replace: '$+{one}{{redis_host}}", 26381\)\]' }
+          - { regexp: 'alert\@mail.viabtc.cn',
+              replace: '{{alert_email}}' }
 
     - name: install alertcenter_mailer systemd service
       template: src=templates/alertcenter_mailer.j2 dest=/etc/systemd/system/alertcenter_mailer.service
