@@ -1,0 +1,65 @@
+---
+- name: backup
+  hosts: all
+  become: yes
+  become_user: root
+
+  tasks:
+
+    # we need duplicity 0.7.17 for B2 support fixed
+    - apt_repository:
+        repo: ppa:duplicity-team
+
+    - name: Install duplicity
+      action: apt pkg=duplicity state=present
+
+    - name: Install pip
+      action: apt pkg=python-pip state=present
+
+    - name: install python backblaze b2 lib
+      pip:
+        name: b2==1.4.0
+
+    - name: Install pexpect
+      action: apt pkg=python-pexpect state=present
+
+    - name: Copy public backup key
+      copy:
+        src: "{{ gpg_public_key }}"
+        dest: /tmp/gpg_pub.key
+
+    - name: Install public backup key
+      shell: gpg --import /tmp/gpg_pub.key
+
+    - name: Print key info
+      shell: gpg --with-fingerprint --with-colons /tmp/gpg_pub.key
+      register: key_info
+
+    - name: Extract key ID
+      set_fact: gpg_key_id={{ key_info.stdout | regex_search(fingerprint_pattern, '\\1') | first }}
+      vars:
+        fingerprint_pattern: "fpr:.*:.*:.*:.*:.*:.*:.*:.*:([A-Z0-9]*):"
+
+    - name: trust gpg key
+      shell: "echo {{ gpg_key_id }}:6: | gpg --import-ownertrust"
+
+    - name: create backup dir
+      shell: mkdir -p /opt/backup
+
+    - name: create backup name
+      shell: "echo '{{ ansible_date_time.date }}_{{ansible_hostname}}' > /opt/backup/backup_name"
+      args:
+         creates: /opt/backup/backup_name
+
+    - name: read backup name 
+      shell: cat /opt/backup/backup_name
+      register: backup_name
+
+    - name: use backup name to set backup directory
+      set_fact: b2_bucket_dir={{ backup_name.stdout }}
+
+    - name: Set daily backup script
+      template:
+        src: templates/backup.sh.j2
+        dest: /etc/cron.daily/01acuerdo_database_backup
+        mode: 0755

@@ -1,0 +1,54 @@
+#!/bin/bash
+
+########################################################################
+# A b2 backup script
+# Uses duplicity (http://duplicity.nongnu.org/)
+#
+# Run this daily and keep 1 month's worth of backups
+########################################################################
+
+# b2 variables
+B2_ACCOUNT_ID={{b2_acct_id}}
+B2_APPLICATION_KEY={{b2_app_key}}
+BUCKET={{b2_bucket}}
+BUCKET_DIR={{b2_bucket_dir}}
+
+# GPG
+ENCRYPT_KEY={{gpg_key_id}}
+#TODO: verify requires the private key and passphrase :(
+#export PASSPHRASE=
+
+# Database credentials
+DB_USER='{{mysql_user}}'
+DB_PASS='{{mysql_pass}}'
+
+# Backup these databases
+DATABASES=({{backup_dbs}}) 
+
+# Working directory
+WORKING_DIR=/opt/backup/temp
+
+########################################################################
+
+# Make the working directory
+mkdir -p $WORKING_DIR
+
+#
+# Dump the databases
+#
+for database in ${DATABASES[@]}; do
+  mysqldump -u$DB_USER -p$DB_PASS $database > $WORKING_DIR/$database.sql
+done
+
+# Send them to b2
+duplicity --full-if-older-than 7D --encrypt-key="$ENCRYPT_KEY" $WORKING_DIR b2://$B2_ACCOUNT_ID:$B2_APPLICATION_KEY@$BUCKET/$BUCKET_DIR
+
+#TODO: verify requires the passphrase :(
+## Verify
+#duplicity verify --encrypt-key="$ENCRYPT_KEY" b2://$B2_ACCOUNT_ID:$B2_APPLICATION_KEY@$BUCKET $WORKING_DIR
+
+## Cleanup
+#duplicity remove-older-than 30D --force --encrypt-key=$ENCRYPT_KEY b2://$B2_ACCOUNT_ID:$B2_APPLICATION_KEY@$BUCKET/$BUCKET_DIR
+
+# Remove the working directory
+rm -rf $WORKING_DIR
