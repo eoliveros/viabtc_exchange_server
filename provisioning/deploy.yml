@@ -37,6 +37,12 @@
 
 - import_playbook: firewall.yml
   when: deploy_type != "local"
+- import_playbook: updates.yml
+  when: deploy_type != "local"
+- import_playbook: fail2ban.yml
+  when: deploy_type != "local"
+- import_playbook: logwatch.yml
+  when: deploy_type != "local"
 - import_playbook: mysql.yml
 - import_playbook: redis.yml
 - import_playbook: kafka.yml
