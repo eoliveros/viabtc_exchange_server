@@ -58,8 +58,15 @@
     - name: use backup name to set backup directory
       set_fact: b2_bucket_dir={{ backup_name.stdout }}
 
-    - name: Set daily backup script
+    - name: copy daily backup script
       template:
         src: templates/backup.sh.j2
-        dest: /etc/cron.daily/01acuerdo_database_backup
+        dest: /opt/backup/backup.sh
         mode: 0755
+
+    - name: add cron job to run backup
+      cron:
+        name: daily backup
+        special_time: daily
+        job: >
+          /bin/bash /opt/backup/backup.sh backup

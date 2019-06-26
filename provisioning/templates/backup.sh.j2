@@ -1,11 +1,19 @@
 #!/bin/bash
 
+set -e
+
 ########################################################################
 # A b2 backup script
 # Uses duplicity (http://duplicity.nongnu.org/)
 #
 # Run this daily and keep 1 month's worth of backups
 ########################################################################
+
+# backup or restore
+ACTION_BACKUP=backup
+ACTION_RESTORE=restore
+ACTION=$1
+
 
 # b2 variables
 B2_ACCOUNT_ID={{b2_acct_id}}
@@ -18,37 +26,124 @@ ENCRYPT_KEY={{gpg_key_id}}
 #TODO: verify requires the private key and passphrase :(
 #export PASSPHRASE=
 
-# Database credentials
-DB_USER='{{mysql_user}}'
-DB_PASS='{{mysql_pass}}'
-
 # Backup these databases
 DATABASES=({{backup_dbs}}) 
 
+display_usage() { 
+    echo -e "\nUsage:
+
+    backup.sh <ACTION ($ACTION_BACKUP | $ACTION_RESTORE)> 
+
+        ACTION=$ACTION_BACKUP: backup the mysql databases ($DATABASES) to backblaze b2, requires GPG pubkey ($ENCRYPT_KEY) present
+
+        ACTION=$ACTION_RESTORE: restore the mysql databases ($DATABASES) from backblaze b2, requires GPG *privkey* ($ENCRYPT_KEY) present
+               WARNING: This action will overwrite any databases already present!
+    "
+} 
+
+# if less than one arguments supplied, show help
+if [ $# -le 0 ]
+then 
+    display_usage
+    exit 1
+fi 
+
+# check whether user had supplied -h or --help . If yes display usage 
+if [[ ( $@ == "--help" ) ||  ( $@ == "-h" ) ]] 
+then 
+    display_usage
+    exit 0
+fi 
+
+# check whether user has a valid ACTION
+if [[ ( $ACTION != "$ACTION_BACKUP" ) &&  ( $ACTION != "$ACTION_RESTORE" ) ]] 
+then 
+    display_usage
+    echo !!\"$ACTION\" is not valid
+    exit 2
+fi 
+
 # Working directory
 WORKING_DIR=/opt/backup/temp
+if [[ ( $ACTION == "$ACTION_RESTORE" ) ]] 
+then 
+    WORKING_DIR=/opt/backup/restore
+fi 
 
 ########################################################################
 
 # Make the working directory
 mkdir -p $WORKING_DIR
 
-#
-# Dump the databases
-#
-for database in ${DATABASES[@]}; do
-  mysqldump -u$DB_USER -p$DB_PASS $database > $WORKING_DIR/$database.sql
-done
+if [[ ( $ACTION == "$ACTION_BACKUP" ) ]] 
+then 
 
-# Send them to b2
-duplicity --full-if-older-than 7D --encrypt-key="$ENCRYPT_KEY" $WORKING_DIR b2://$B2_ACCOUNT_ID:$B2_APPLICATION_KEY@$BUCKET/$BUCKET_DIR
+    #
+    # Dump the databases
+    #
+    for database in ${DATABASES[@]}; do
+      mysqldump $database > $WORKING_DIR/$database.sql
+    done
 
-#TODO: verify requires the passphrase :(
-## Verify
-#duplicity verify --encrypt-key="$ENCRYPT_KEY" b2://$B2_ACCOUNT_ID:$B2_APPLICATION_KEY@$BUCKET $WORKING_DIR
+    # Send them to b2
+    duplicity --full-if-older-than 7D --encrypt-key="$ENCRYPT_KEY" $WORKING_DIR b2://$B2_ACCOUNT_ID:$B2_APPLICATION_KEY@$BUCKET/$BUCKET_DIR
 
-## Cleanup
-#duplicity remove-older-than 30D --force --encrypt-key=$ENCRYPT_KEY b2://$B2_ACCOUNT_ID:$B2_APPLICATION_KEY@$BUCKET/$BUCKET_DIR
+    #TODO: verify requires the passphrase :(
+    ## Verify
+    #duplicity verify --encrypt-key="$ENCRYPT_KEY" b2://$B2_ACCOUNT_ID:$B2_APPLICATION_KEY@$BUCKET $WORKING_DIR
+
+    ## Cleanup
+    #duplicity remove-older-than 30D --force --encrypt-key=$ENCRYPT_KEY b2://$B2_ACCOUNT_ID:$B2_APPLICATION_KEY@$BUCKET/$BUCKET_DIR
+
+fi
+
+if [[ ( $ACTION == "$ACTION_RESTORE" ) ]] 
+then 
+
+    # ask user to continue
+    echo "::DATABASE RESTORE:: this will erase any databases already on this machine!"
+    read -p "Are you sure? (type 'yes' to continue) "
+    echo # (optional) move to a new line
+    if [[ $REPLY =~ ^[Yy][Ee][Ss]$ ]]
+    then
+
+        # read passphrase
+        echo -n Enter GPG passphrase: 
+        read -s PASSPHRASE
+        export PASSPHRASE=$PASSPHRASE
+        echo
+
+        # remove any files that could be in the working dir
+        rm $WORKING_DIR/* || true
+
+        # get database dumps from backblaze b2
+        for database in ${DATABASES[@]}; do
+            echo "Grabbing latest backup of $database from backup server"
+            duplicity --file-to-restore $database.sql b2://${B2_ACCOUNT_ID}:${B2_APPLICATION_KEY}@${BUCKET}/${BUCKET_DIR} ${WORKING_DIR}/$database.sql
+        done
+
+        # verify restored files
+        echo "Verifying REMOTE ${BUCKET}/${BUCKET_DIR} against LOCAL ${WORKING_DIR}"
+        duplicity verify b2://${B2_ACCOUNT_ID}:${B2_APPLICATION_KEY}@${BUCKET}/${BUCKET_DIR} ${WORKING_DIR}
+
+        #
+        # CREATE the databases
+        #
+        for database in ${DATABASES[@]}; do
+            echo "CREATING DATABASE $database from mysql server:"
+            echo "CREATE DATABASE IF NOT EXISTS $database" | mysql
+        done
+
+        #
+        # RESTORE the databases
+        #
+        for database in ${DATABASES[@]}; do
+            echo "RESTORING $database database from $database.sql file:"
+            mysql $database < $WORKING_DIR/$database.sql
+        done
+
+    fi
+fi
 
 # Remove the working directory
 rm -rf $WORKING_DIR
