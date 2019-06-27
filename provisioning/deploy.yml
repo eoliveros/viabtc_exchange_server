@@ -43,6 +43,8 @@
   when: deploy_type != "local"
 - import_playbook: logwatch.yml
   when: deploy_type != "local"
+- import_playbook: postfix.yml
+  when: deploy_type != "local"
 - import_playbook: mysql.yml
 - import_playbook: redis.yml
 - import_playbook: kafka.yml
