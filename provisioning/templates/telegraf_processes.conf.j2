@@ -1,0 +1,19 @@
+[[inputs.exec]]
+  commands = [ 
+               "/opt/telegraf/telegraf_processes.sh mysql",
+               "/opt/telegraf/telegraf_processes.sh kafka",
+               "/opt/telegraf/telegraf_processes.sh zookeeper",
+               "/opt/telegraf/telegraf_processes.sh redis",
+               "/opt/telegraf/telegraf_processes.sh redis-sentinel",
+               "/opt/telegraf/telegraf_processes.sh alertcenter",
+               "/opt/telegraf/telegraf_processes.sh alertcenter_mailer",
+               "/opt/telegraf/telegraf_processes.sh marketprice",
+               "/opt/telegraf/telegraf_processes.sh matchengine",
+               "/opt/telegraf/telegraf_processes.sh readhistory",
+               "/opt/telegraf/telegraf_processes.sh accesshttp",
+               "/opt/telegraf/telegraf_processes.sh accessws",
+               "/opt/telegraf/telegraf_processes.sh nginx"
+	     ]
+    name_override = "process_status"
+    data_format = "json"
+    timeout = "10s"

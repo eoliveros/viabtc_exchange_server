@@ -61,6 +61,17 @@
         src: templates/telegraf_sshd.conf.j2
         dest: /etc/telegraf/telegraf.d/sshd.conf
 
+    - name: install processes telegraf config
+      template:
+        src: templates/telegraf_processes.conf.j2
+        dest: /etc/telegraf/telegraf.d/telegraf_processes.conf
+
+    - name: install processes telegraf script
+      template:
+        src: templates/telegraf_processes.sh
+        dest: /opt/telegraf/telegraf_processes.sh
+        mode: 0755
+
     # general config
     - name: install telegraf config
       template:
